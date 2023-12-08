@@ -1,0 +1,52 @@
+from __future__ import annotations
+from abc import ABC, abstractmethod
+from typing import List
+
+# Абстрактний клас Ітератора
+class Iterator(ABC):
+    @abstractmethod
+    def has_next(self) -> bool:
+        pass
+
+    @abstractmethod
+    def next(self):
+        pass
+
+# Абстрактний клас Агрегатора
+class Aggregator(ABC):
+    @abstractmethod
+    def create_iterator(self) -> Iterator:
+        pass
+
+# Конкретний клас Ітератора
+class ConcreteIterator(Iterator):
+    def __init__(self, collection: List[int]):
+        self._collection = collection
+        self._index = 0
+
+    def has_next(self) -> bool:
+        return self._index < len(self._collection)
+
+    def next(self):
+        if self.has_next():
+            value = self._collection[self._index]
+            self._index += 1
+            return value
+        else:
+            raise StopIteration()
+
+# Конкретний клас Агрегатора
+class ConcreteAggregator(Aggregator):
+    def __init__(self, collection: List[int]):
+        self._collection = collection
+
+    def create_iterator(self) -> Iterator:
+        return ConcreteIterator(self._collection)
+
+# Використання
+collection = [1, 2, 3, 4, 5]
+aggregator = ConcreteAggregator(collection)
+iterator = aggregator.create_iterator()
+
+while iterator.has_next():
+    print(iterator.next())
